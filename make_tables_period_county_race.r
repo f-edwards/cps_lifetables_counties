@@ -165,34 +165,27 @@ tables_comb<-tables_comb %>%
 tables_comb<-tables_comb %>% 
   mutate(county = 
            case_when(
-             fipscode==4013 ~ "Maricopa, AZ",
-             fipscode==6001 ~ "Alameda, CA",
-             fipscode==6037 ~ "Los Angeles, CA",
-             fipscode==6059 ~ "Orange, CA",
-             fipscode==6065 ~ "Riverside, CA",
-             fipscode==6071 ~ "San Bernadino, CA",
-             fipscode==6073 ~ "San Diego, CA",
-             fipscode==6085 ~ "Santa Clara, CA",
-             fipscode==12011 ~ "Broward, FL",
-             fipscode==12086 ~ "Miami-Dade, FL",
-             fipscode==17031 ~ "Cook, IL",
-             fipscode==25017 ~ "Middlesex, MA",
-             fipscode==26163 ~ "Wayne, MI",
-             fipscode==32003 ~ "Clark, NV",
-             fipscode==36061 ~ "New York, NY",
-             fipscode==48029 ~ "Bexar, TX",
-             fipscode==48113 ~ "Dallas, TX",
-             fipscode==48201 ~ "Harris, TX",
-             fipscode==48439 ~ "Tarrant, TX",
-             fipscode==53033 ~ "King, WA"
+             fipscode==4013 ~ "AZ: Maricopa",
+             fipscode==6001 ~ "CA: Alameda",
+             fipscode==6037 ~ "CA: Los Angeles",
+             fipscode==6059 ~ "CA: Orange",
+             fipscode==6065 ~ "CA: Riverside",
+             fipscode==6071 ~ "CA: San Bernadino",
+             fipscode==6073 ~ "CA: San Diego",
+             fipscode==6085 ~ "CA: Santa Clara",
+             fipscode==12011 ~ "FL: Broward",
+             fipscode==12086 ~ "FL: Miami-Dade",
+             fipscode==17031 ~ "IL: Cook",
+             fipscode==25017 ~ "MA: Middlesex",
+             fipscode==26163 ~ "MI: Wayne",
+             fipscode==32003 ~ "NV: Clark",
+             fipscode==36061 ~ "NY: New York",
+             fipscode==48029 ~ "TX: Bexar",
+             fipscode==48113 ~ "TX: Dallas",
+             fipscode==48201 ~ "TX: Harris",
+             fipscode==48439 ~ "TX: Tarrant",
+             fipscode==53033 ~ "WA: King"
            ))
 
 
 write_csv(tables_comb, "./vis/county_tables.csv")
-
-#### QUADRUPLE CHECK THE NYC NUMBERS 36061
-### https://www1.nyc.gov/assets/acs/pdf/data-analysis/abuseneglectreport15to19.pdf
-### these numbers for cumulative risk are nuts
-### but the counts and population totals look right....
-### the pop was way wrong. confirm the counts. the numbers are still 
-### incredibly high...
