@@ -97,6 +97,7 @@ dat<-pop_fips %>%
   left_join(tpr)
 
 
+
 ## set up for lifetable loop
 tab_dat<-dat %>% 
   pivot_longer(names_to = "varname",
@@ -110,6 +111,15 @@ tab_dat<-tab_dat %>%
   summarise(pop = sum(pop),
             var = sum(var)) %>% 
   ungroup()
+
+tot_dat<-tab_dat %>% 
+  group_by(.imp, fipscode, age, varname) %>% 
+  summarise(pop = sum(pop),
+            var = sum(var)) %>% 
+  mutate(race_ethn = "Total")
+
+tab_dat<-tab_dat %>% 
+  bind_rows(tot_dat)
 
 ### run life tables by imp, race_ethnb, sex
 vars<-unique(tab_dat$varname)
