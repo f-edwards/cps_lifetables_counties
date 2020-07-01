@@ -43,6 +43,8 @@ top_pops<-pop_fips %>%
   mutate(rank = 1:n()) %>%
   filter(rank<=20) 
 
+write_csv(top_pops, "./data/top_pops.csv")
+
 pop_fips <- pop_fips %>% 
   ungroup() %>% 
   filter(fipscode%in%top_pops$fipscode) %>% 
