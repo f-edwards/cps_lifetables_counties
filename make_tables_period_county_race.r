@@ -99,6 +99,14 @@ dat<-pop_fips %>%
   left_join(tpr)
 
 
+check<-dat %>% 
+  filter(.imp==1) %>% 
+  group_by(year, fipscode, race_ethn) %>% 
+  summarise(pop = sum(pop),
+            first_victim = sum(first_victim),
+            first_inv = sum(first_inv),
+            first_entry = sum(first_entry),
+            tpr = sum(tpr))
 
 ## set up for lifetable loop
 tab_dat<-dat %>% 
