@@ -1,3 +1,3 @@
-Code for estimating national age and race/ethnicity specific estimates of risk of ever experiencing foster care or a CPS confirmed case of child abuse or neglect
+Code for estimating county-level age and race/ethnicity specific estimates of risk of ever experiencing CPS events
 
 Depends on imputations from cps_lifetables/states
