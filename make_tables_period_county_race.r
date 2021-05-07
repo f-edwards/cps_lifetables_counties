@@ -137,19 +137,74 @@ race<-unique(tab_dat$race_ethn)
 fips<-unique(tab_dat$fipscode)
 tables_out<-list()
 
+### descriptive table out for appendix
+appx<-tab_dat %>% 
+  filter(.imp==1) %>% 
+  group_by(fipscode, race_ethn, varname) %>% 
+  summarise(pop = sum(pop), var = sum(var)) %>% 
+  pivot_wider(names_from = varname, values_from = var) %>% 
+  mutate(county =
+           case_when(
+             fipscode==4013 ~ "AZ: Maricopa",
+             fipscode==6001 ~ "CA: Alameda",
+             fipscode==6037 ~ "CA: Los Angeles",
+             fipscode==6059 ~ "CA: Orange",
+             fipscode==6065 ~ "CA: Riverside",
+             fipscode==6071 ~ "CA: San Bernadino",
+             fipscode==6073 ~ "CA: San Diego",
+             fipscode==6085 ~ "CA: Santa Clara",
+             fipscode==12011 ~ "FL: Broward",
+             fipscode==12086 ~ "FL: Miami-Dade",
+             fipscode==17031 ~ "IL: Cook",
+             fipscode==25017 ~ "MA: Middlesex",
+             fipscode==26163 ~ "MI: Wayne",
+             fipscode==32003 ~ "NV: Clark",
+             fipscode==36061 ~ "NY: New York",
+             fipscode==48029 ~ "TX: Bexar",
+             fipscode==48113 ~ "TX: Dallas",
+             fipscode==48201 ~ "TX: Harris",
+             fipscode==48439 ~ "TX: Tarrant",
+             fipscode==53033 ~ "WA: King"
+           )) %>% 
+  ungroup() %>% 
+  select(-fipscode) %>% 
+  select(county, race_ethn, pop, first_entry, first_inv, first_victim, tpr) %>% 
+  write_csv("./vis/appx_pop_var_table.csv")
+
+library(xtable)
+
+appx<-appx %>% 
+  select(county, race_ethn, pop, first_inv, first_victim, first_entry, tpr) %>% 
+  rename(County = county,
+         `Race/ethnicity` = race_ethn,
+         `5 year population total` = pop,
+         `First foster care entries` = first_entry,
+         `First investigation` = first_inv,
+         `First substantiation` = first_victim,
+         `Termination` = tpr) %>% 
+
+appx_out<-xtable(appx,
+                 digits = 0,
+                 caption = "First events by county and race, 5-year pooled event counts and population")
+
+print(appx_out,
+      include.rownames = F,
+      file = "./vis/appx_tab.tex"
+      )
+
 counter<-0
 for(h in 1:length(vars)){
   for(i in 1:max(tab_dat$.imp)){
     for(r in 1:length(fips)){
       for(y in 1:length(race)){
         counter<-counter + 1
-        
+
         temp<-tab_dat %>%
           filter(.imp == i,
                  varname == vars[h],
                  fipscode == fips[r],
                  race_ethn == race[y])
-        
+
         tables_out[[counter]]<-make_life_table(temp)
       }
     }
@@ -176,14 +231,14 @@ tables_comb<-tables_within %>%
 
 tables_comb<-tables_comb %>%
   mutate(c_upr = c_mn + 1.96 * se_tot,
-         c_lwr = c_mn - 1.96 * se_tot) %>% 
-  filter(age==18) %>% 
+         c_lwr = c_mn - 1.96 * se_tot) %>%
+  filter(age==18) %>%
   mutate(c_upr = ifelse(c_upr>1, 1, c_upr),
          c_lwr = ifelse(c_lwr<0, 0, c_lwr))
 
 ### format names
-tables_comb<-tables_comb %>% 
-  mutate(county = 
+tables_comb<-tables_comb %>%
+  mutate(county =
            case_when(
              fipscode==4013 ~ "AZ: Maricopa",
              fipscode==6001 ~ "CA: Alameda",
