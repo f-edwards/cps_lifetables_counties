@@ -181,7 +181,7 @@ appx<-appx %>%
          `First foster care entries` = first_entry,
          `First investigation` = first_inv,
          `First substantiation` = first_victim,
-         `Termination` = tpr) %>% 
+         `Termination` = tpr)
 
 appx_out<-xtable(appx,
                  digits = 0,
