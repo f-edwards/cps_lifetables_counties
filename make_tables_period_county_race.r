@@ -263,4 +263,4 @@ tables_comb<-tables_comb %>%
            ))
 
 
-write_csv(tables_comb, "./vis/county_tables.csv")
+write_csv(tables_comb, "./vis/county_tables_corrected.csv")
