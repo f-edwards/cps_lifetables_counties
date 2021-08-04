@@ -89,4 +89,4 @@ victim_temp<-victim_temp %>%
   mutate(first_victim = ifelse(is.na(first_victim), 0, first_victim))
 
 write_csv(inv_temp, "./data/county_first_inv.csv")
-write_csv(victim_temp, "./data/county_first_victim_out.csv")
+write_csv(victim_temp, "./data/county_first_victim.csv")
