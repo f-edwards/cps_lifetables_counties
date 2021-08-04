@@ -10,9 +10,15 @@ library(mice)
 #   select(-staterr, -chid) %>% 
 #   distinct() 
 
-index_first_investigation<-read_csv("./data/ncands_first_report_index.csv") 
+index_first_investigation<-read_csv("~/Projects/cps_lifetables/data/ncands_first_report_index.csv") 
 
-index_first_victim<-read_csv("./data/ncands_first_victim_index.csv") 
+index_first_investigation<-index_first_investigation %>% 
+  mutate(first = T)
+
+index_first_victim<-read_csv("~/Projects/cps_lifetables/data/ncands_first_victim_index.csv") 
+
+index_first_victim<-index_first_victim %>% 
+  mutate(first = T)
 
 files<-list.files("./data")
 ncands_imputations<-files[grep("ncands_imps", files)]
@@ -27,41 +33,21 @@ for(i in 1:length(ncands_imputations)){
   temp<-mice::complete(imps, action = "long", include = F)
   temp<-temp %>% 
     mutate(st_id = paste(staterr, chid, sep = "")) %>% 
-    select(.imp, .id, st_id, chid, staterr, rptfips, rptdt, age, race_ethn, rptvictim) 
+    select(.imp, .id, st_id, chid, staterr, rptfips, rptdt, 
+           age, race_ethn, rptvictim) 
 
-  first_investigations[[i]]<-index_first_investigation %>% 
-    left_join(temp) %>% 
-    filter(!(is.na(chid))) 
+  first_investigations[[i]]<-temp %>% 
+    left_join(index_first_investigation) %>% 
+    filter(first==T) 
   
-  first_victims[[i]]<-index_first_victim %>% 
-    left_join(temp) %>% 
-    filter(!(is.na(chid)))
+  first_victims[[i]]<-temp %>% 
+    left_join(index_first_victim) %>% 
+    filter(first==T)
   
-  # first_investigations[[i]]<-temp_first_inv %>% 
-  #   group_by(.imp, subyr, staterr, race_ethn, age) %>% 
-  #   summarise(first_inv = n()) %>% 
-  #   ungroup()
-  # 
-  # first_victims[[i]]<-temp_first_victim %>% 
-  #   filter(rptvictim==1) %>% 
-  #   group_by(.imp, subyr, staterr, race_ethn, age) %>% 
-  #   summarise(first_victim = n()) %>% 
-  #   ungroup()
-  # 
-  # gc()
 }
 
 inv_out<-bind_rows(first_investigations) %>% 
-  ungroup() %>%   
-  filter(!staterr%in%c("PA", "GA", "RI")) %>% 
-  arrange(rptdt) %>% 
-  group_by(.imp, st_id) %>% 
-  slice(1)
-
-# ### identical number of unique IDs in index and imputed
-# inv_out %>% 
-#   group_by(.imp) %>% 
-#   summarise(n = n())
+  filter(!staterr%in%c("PA", "GA", "RI")) 
 
 temp<-expand_grid(unique(inv_out$.imp),
                   unique(inv_out$rptfips),
@@ -83,10 +69,7 @@ inv_temp<-inv_temp%>%
   right_join(temp) %>% 
   mutate(first_inv = ifelse(is.na(first_inv), 0, first_inv))
 
-victim_out<-bind_rows(first_victims)%>% 
-  arrange(rptdt) %>% 
-  group_by(.imp, st_id) %>% 
-  slice(1)
+victim_out<-bind_rows(first_victims)
 
 temp<-expand_grid(unique(victim_out$.imp),
                   unique(victim_out$rptfips),
